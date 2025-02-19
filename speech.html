@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test To Speech</title>
+    <link rel="stylesheet" href="speechstyle.css">
+</head>
+<body>
+    <div class="container">
+        <div class="Speech">
+            <h1 id="first">Text-To-Speech</h1>
+            <p id="text">Input Text:</p>
+            <textarea name="contain" id="inputfield" placeholder="Write Something Here"></textarea>
+            <div class="form">
+                <label for="101">
+                <div id="speed">
+                    <input type="radio" value="Slow" name="class" id="101">Slow
+                </div>
+                </label>
+                <label for="102">
+                <div id="speed">    
+                    <input type="radio" value="Normal" name="class" id="102">Normal
+                </div>
+                </label>
+                <label for="103">
+                <div id="speed">
+                    <input type="radio" value="Fast" name="class" id="103">Fast  
+                </div>
+                </label>
+                <label for="104">
+                <div id="speed">
+                    <input type="radio" value="Extra Fast" name="class" id="104">Extra Fast
+                </div>
+                </label>
+            </div>
+            <div class="element">
+                <label for="F"><p>Select Language:</p></label>
+                <select id="F">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                </select>
+                <label for="L"><p>Select Voice:</p></label>
+                <select id="L">
+                    <option value="Joanna">Joanna</option>
+                    <option value="Matthew">Matthew</option>
+                    <option value="Amy">Amy</option>
+                    <option value="Brian">Brian</option>
+                </select>
+            </div>
+            <div class="slider-container">
+                <p>Adjust Volume:</p>
+                <input type="range" id="volume-slider" class="slider" min="0" max="1" step="0.1" value="0.5">
+                <span id="slider-value" class="slider-value">50%</span>
+            </div>
+
+            <div class="Button">
+            <button id="convertButton"><b>Convert To Speech</b></button>
+            <a id="downloadButton" class="download-btn" href="#" download="speech.mp3">
+                <button>Download MP3</button>
+            </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('convertButton').addEventListener('click', async () => {
+            const text = document.getElementById('inputfield').value;
+            const voice = document.getElementById('L').value;
+            const speed = document.getElementById('speed').value;
+            const volume = document.getElementById('volume-slider').value;
+
+
+            //const volume = document.getElementById('volume-slider').value;
+
+
+            if (!text) {
+                alert('Please enter text to convert.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/convert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text, voice, speed,volume}),
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+
+                    // Show the download button and attach the URL
+                    const downloadButton = document.getElementById('downloadButton');
+                    downloadButton.href = url;
+                    downloadButton.style.display = 'inline-block';
+
+                    const audio = new Audio(url);
+                    audio.play();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to convert text to speech.');
+            }
+        });
+        // Update the volume percentage display
+        const volumeSlider = document.getElementById('volume-slider');
+        const sliderValue = document.getElementById('slider-value');
+        volumeSlider.addEventListener('input', () => {
+            sliderValue.textContent = Math.round(volumeSlider.value * 100) + '%';
+        });
+    </script>
+</body>
+</html>
