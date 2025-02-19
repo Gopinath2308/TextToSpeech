@@ -8,8 +8,8 @@ CORS(app)
 # Amazon Polly client setup
 polly_client = boto3.client(
     'polly',region_name='ap-south-1',
-    aws_access_key_id='AKIA42PHH5QTAXZVYZWG',
-    aws_secret_access_key='q3RzZjEY503ZzST4W+/MMb5t1zvVSMeFRtYbcXS0'
+    aws_access_key_id='Your access Key',
+    aws_secret_access_key='Your_secret_access_key'
 )
 
 
